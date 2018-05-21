@@ -1,7 +1,3 @@
-Documentation
-=============
-
-
 ## Development setup
 
 ```bash
