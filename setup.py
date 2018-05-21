@@ -27,6 +27,11 @@ setup(name='candidate_estimator',
           'waitress',
           'sqlalchemy',
           'colander',
+          'iso8601',
+          'numpy',
+          'pandas',
+          'scipy',
+          'scikit-learn',
       ],
       entry_points="""\
       [paste.app_factory]

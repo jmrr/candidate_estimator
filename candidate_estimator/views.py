@@ -5,10 +5,10 @@ import logging
 from pyramid.security import Allow, Everyone
 from cornice.resource import resource, view
 from cornice.validators import colander_body_validator
+from sklearn.externals import joblib
 
 from candidate_estimator import model
 from candidate_estimator.schema import CandidateSchema
-
 
 log = logging.getLogger(__name__)
 
@@ -21,6 +21,7 @@ class Candidate(object):
 
     def __init__(self, request, context=None):
         self.request = request
+        self.model = joblib.load('scripts/model.pkl')
 
     def __acl__(self):
         return [(Allow, Everyone, 'everything')]
@@ -45,6 +46,22 @@ class Candidate(object):
         db = self.request.db
         validated = self.request.validated
         new_candidate = model.Candidates.deserialize(validated)
+
+        timedelta = (
+                new_candidate.applicationTime
+                - new_candidate.invitationDate
+        ).seconds
+        video_length = new_candidate.videoLength
+
+        predicted_score = int(self.model.predict([[
+            timedelta,
+            video_length,
+        ]])[0])
+
+        new_candidate.predictedScore = predicted_score
         db.add(new_candidate)
         db.flush()  # here we get id from DB
-        return new_candidate.serialize()
+        return {
+            'predictedScore': new_candidate.predictedScore,
+            'isHired': bool(new_candidate.predictedScore > 3),
+        }
