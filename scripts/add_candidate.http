@@ -1,0 +1,34 @@
+POST localhost:6543/candidates
+Content-Type: application/json
+
+{
+    "applicationId": "367125q77318",
+    "candidateId": 367125,
+    "invitationDate": "2016-04-07 06:07:47+00:00",
+    "applicationTime": "2016-04-08 23:29:48+00:00",
+    "isRetake": false,
+    "speechToText": [
+        {
+            "name": "Hi",
+            "time": "1.89",
+            "duration": "0.18",
+            "confidence": "1.000"
+        },
+        {
+            "name": "there",
+            "time": "2.22",
+            "duration": "0.15",
+            "confidence": "1.000"
+        },
+        {
+            "name": ".",
+            "time": "2.37",
+            "duration": "0.18",
+            "confidence": "1.000"
+        }
+    ],
+    "videoLength": 115.09,
+    "score": 4
+}
+
+###
