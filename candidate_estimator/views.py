@@ -5,7 +5,6 @@ import logging
 from pyramid.security import Allow, Everyone
 from cornice.resource import resource, view
 from cornice.validators import colander_body_validator
-from sklearn.externals import joblib
 
 from candidate_estimator import model
 from candidate_estimator.schema import CandidateSchema
@@ -21,7 +20,6 @@ class Candidate(object):
 
     def __init__(self, request, context=None):
         self.request = request
-        self.model = joblib.load('scripts/model.pkl')
 
     def __acl__(self):
         return [(Allow, Everyone, 'everything')]
@@ -53,7 +51,7 @@ class Candidate(object):
         ).seconds
         video_length = new_candidate.videoLength
 
-        predicted_score = int(self.model.predict([[
+        predicted_score = int(self.request.registry.model.predict([[
             timedelta,
             video_length,
         ]])[0])

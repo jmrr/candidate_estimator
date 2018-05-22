@@ -1,6 +1,7 @@
 """Main entry point
 """
 from pyramid.config import Configurator
+from sklearn.externals import joblib
 from sqlalchemy import engine_from_config
 from sqlalchemy.orm import sessionmaker
 
@@ -27,6 +28,7 @@ def main(global_config, **settings):
     engine = engine_from_config(settings)       # prefix='sqlalchemy.' used in .ini file
     initialize_sql(engine)
     config.registry.dbmaker = sessionmaker(bind=engine)
+    config.registry.model = joblib.load(settings['model'])
     config.add_request_method(db, reify=True)   # request.db contains SQLAlchemy session
     config.include("cornice")
     config.scan("candidate_estimator.views")
