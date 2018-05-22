@@ -1,4 +1,4 @@
-POST localhost:6543/candidates
+POST localhost:6543/profiles
 Content-Type: application/json
 
 {

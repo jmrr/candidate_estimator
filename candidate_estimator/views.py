@@ -7,16 +7,16 @@ from cornice.resource import resource, view
 from cornice.validators import colander_body_validator
 
 from candidate_estimator import model
-from candidate_estimator.schema import CandidateSchema
+from candidate_estimator.schema import ProfileSchema
 
 log = logging.getLogger(__name__)
 
 
 @resource(
-    collection_path='/candidates',
-    path='/candidates/{candidate_id}',
+    collection_path='/profiles',
+    path='/profiles/{profile_id}',
 )
-class Candidate(object):
+class Profile(object):
 
     def __init__(self, request, context=None):
         self.request = request
@@ -26,40 +26,40 @@ class Candidate(object):
 
     def get(self):
         request = self.request
-        candidate_id = request.matchdict['candidate_id']
-        candidate = request.db.query(model.Candidates).get(candidate_id)
-        if not candidate:
-            request.errors.add('url', 'candidate_id', 'Candidate not found')
+        profile_id = request.matchdict['profile_id']
+        profile = request.db.query(model.Profile).get(profile_id)
+        if not profile:
+            request.errors.add('url', 'profile_id', 'Profile not found')
             request.errors.status = 404
             return
 
-        return candidate.serialize()
+        return profile.serialize()
 
     @view(
         content_type='application/json',
-        schema=CandidateSchema(),
+        schema=ProfileSchema(),
         validators=(colander_body_validator,)
     )
     def collection_post(self):
         db = self.request.db
         validated = self.request.validated
-        new_candidate = model.Candidates.deserialize(validated)
+        new_profile = model.Profile.deserialize(validated)
 
         timedelta = (
-                new_candidate.applicationTime
-                - new_candidate.invitationDate
+                new_profile.applicationTime
+                - new_profile.invitationDate
         ).seconds
-        video_length = new_candidate.videoLength
+        video_length = new_profile.videoLength
 
         predicted_score = int(self.request.registry.model.predict([[
             timedelta,
             video_length,
         ]])[0])
 
-        new_candidate.predictedScore = predicted_score
-        db.add(new_candidate)
+        new_profile.predictedScore = predicted_score
+        db.add(new_profile)
         db.flush()  # here we get id from DB
         return {
-            'predictedScore': new_candidate.predictedScore,
-            'isHired': bool(new_candidate.predictedScore > 3),
+            'predictedScore': new_profile.predictedScore,
+            'isHired': bool(new_profile.predictedScore > 3),
         }

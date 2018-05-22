@@ -5,7 +5,7 @@ from iso8601 import parse_date
 from candidate_estimator import main
 
 
-class TestCandidatesAPI(unittest.TestCase):
+class TestAPIEndpoints(unittest.TestCase):
     def setUp(self):
         settings = {
             'sqlalchemy.url': 'sqlite:///:memory:',
@@ -13,8 +13,8 @@ class TestCandidatesAPI(unittest.TestCase):
         }
         self.app = TestApp(main({}, **settings))
 
-    def test_post_get_candidate_profile(self):
-        candidate = {
+    def test_post_get_profile(self):
+        profile = {
             "applicationId": "367125q77318",
             "candidateId": 367125,
             "invitationDate": "2016-04-07 06:07:47+00:00",
@@ -43,23 +43,23 @@ class TestCandidatesAPI(unittest.TestCase):
             "videoLength": 115.09,
             "score": 4
         }
-        self.app.post_json('/candidates', candidate, status=200)
-        res = self.app.get('/candidates/1', status=200)
+        self.app.post_json('/profiles', profile, status=200)
+        res = self.app.get('/profiles/1', status=200)
 
         dict_keys = (
             'applicationId', 'candidateId',
             'isRetake', 'videoLength', 'score',
         )
         self.assertTrue(
-            {k: candidate[k] for k in dict_keys}.items()
+            {k: profile[k] for k in dict_keys}.items()
             <=  # subset
             {k: res.json_body[k] for k in dict_keys}.items()
         )
         self.assertEqual(
-            parse_date(candidate['invitationDate']),
+            parse_date(profile['invitationDate']),
             parse_date(res.json_body['invitationDate'])
         )
         self.assertEqual(
-            parse_date(candidate['applicationTime']),
+            parse_date(profile['applicationTime']),
             parse_date(res.json_body['applicationTime'])
         )

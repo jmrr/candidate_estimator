@@ -12,7 +12,7 @@ class SpeechToTextSequence(colander.SequenceSchema):
     sequence = SpeechToText()
 
 
-class CandidateSchema(colander.MappingSchema):
+class ProfileSchema(colander.MappingSchema):
     applicationId = colander.SchemaNode(colander.String())
     candidateId = colander.SchemaNode(colander.Integer())
     isRetake = colander.SchemaNode(colander.Bool())

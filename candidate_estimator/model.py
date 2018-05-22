@@ -23,11 +23,11 @@ class SpeechToText(Base):
     time = Column(Float)
     duration = Column(Float)
     confidence = Column(Float)
-    candidate_id = Column(Integer, ForeignKey('candidates.id'))
+    candidate_id = Column(Integer, ForeignKey('profile.id'))
 
 
-class Candidates(Base):
-    __tablename__ = 'candidates'
+class Profile(Base):
+    __tablename__ = 'profile'
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     applicationId = Column(Text)
@@ -62,13 +62,13 @@ class Candidates(Base):
         }
 
     @staticmethod
-    def deserialize(candidate):
-        return Candidates(
-            applicationId=candidate['applicationId'],
-            candidateId=candidate['candidateId'],
-            isRetake=candidate['isRetake'],
-            invitationDate=candidate['invitationDate'],
-            applicationTime=candidate['applicationTime'],
+    def deserialize(profile):
+        return Profile(
+            applicationId=profile['applicationId'],
+            candidateId=profile['candidateId'],
+            isRetake=profile['isRetake'],
+            invitationDate=profile['invitationDate'],
+            applicationTime=profile['applicationTime'],
             speechToText=[
                 SpeechToText(
                     name=obj['name'],
@@ -76,8 +76,8 @@ class Candidates(Base):
                     duration=obj['duration'],
                     confidence=obj['confidence'],
                 )
-                for obj in candidate['speechToText']
+                for obj in profile['speechToText']
             ],
-            videoLength=candidate['videoLength'],
-            score=candidate['score'],
+            videoLength=profile['videoLength'],
+            score=profile['score'],
         )
