@@ -59,6 +59,7 @@ class Profile(Base):
             ],
             'videoLength': self.videoLength,
             'score': self.score,
+            'predictedScore': self.predictedScore,
         }
 
     @staticmethod
